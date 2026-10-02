@@ -1,0 +1,47 @@
+---
+import type { Locale } from '../consts';
+import { getSiteCopy } from '../data/site';
+
+interface Props {
+  locale: Locale;
+  compact?: boolean;
+}
+
+const { locale, compact = false } = Astro.props;
+const copy = getSiteCopy(locale);
+---
+
+<figure class:list={['architecture-panel', { compact }]} aria-labelledby="architecture-title">
+  <figcaption>
+    <span id="architecture-title">{copy.flagship.architectureTitle}</span>
+    <small>{copy.flagship.architectureNote}</small>
+  </figcaption>
+  <div class="architecture-flow">
+    <div class="architecture-node simple">
+      <span>01</span>
+      <strong>{copy.architecture.client}</strong>
+    </div>
+    <i aria-hidden="true">→</i>
+    <div class="architecture-node">
+      <span>02</span>
+      <strong>{copy.architecture.bff}</strong>
+      <small>{copy.architecture.identity}</small>
+    </div>
+    <i aria-hidden="true">→</i>
+    <div class="architecture-node owned">
+      <span>03 / OWNED</span>
+      <strong>{copy.architecture.runtime}</strong>
+      <small>{copy.architecture.runtimeDetail}</small>
+    </div>
+    <i aria-hidden="true">→</i>
+    <div class="architecture-node">
+      <span>04</span>
+      <strong>{copy.architecture.durable}</strong>
+      <small>{copy.architecture.durableDetail}</small>
+    </div>
+  </div>
+  <div class="architecture-storage">
+    <div><span>↳</span> {copy.architecture.store}</div>
+    <div><span>↳</span> {copy.architecture.memory}</div>
+  </div>
+</figure>

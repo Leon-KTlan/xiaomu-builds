@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import type { Locale } from '../../consts';
+import { getSiteCopy } from '../../data/site';
+import { sortPosts } from '../../utils/posts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../PostCard.astro';
+
+interface Props { locale: Locale; }
+
+const { locale } = Astro.props;
+const copy = getSiteCopy(locale);
+const posts = sortPosts(await getCollection('blog'), locale);
+---
+
+<BaseLayout
+  locale={locale}
+  title={copy.meta.writingTitle}
+  description={copy.writingPage.intro}
+  alternatePath={locale === 'en' ? '/zh/writing/' : '/writing/'}
+>
+  <header class="editorial-header" id="top">
+    <p class="eyebrow">{copy.writingPage.eyebrow}</p>
+    <h1>{copy.writingPage.title}</h1>
+    <p>{copy.writingPage.intro}</p>
+    <span class="content-count">{String(posts.length).padStart(2, '0')} {copy.writingPage.count}</span>
+  </header>
+  <section class="writing-archive" aria-label={copy.meta.writingTitle}>
+    {posts.map((post, index) => <PostCard post={post} index={index} featured={index === 0} locale={locale} />)}
+  </section>
+</BaseLayout>

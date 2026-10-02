@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f3f0e7"/>
+  <path d="M0 82h1200M0 548h1200M86 0v630M1114 0v630" stroke="#171916" stroke-width="2"/>
+  <rect x="86" y="82" width="1028" height="38" fill="#171916"/>
+  <text x="110" y="107" font-family="monospace" font-size="16" letter-spacing="3" fill="#f3f0e7">AI AGENT &amp; BACKEND BUILDER — LEON</text>
+  <text x="112" y="236" font-family="Georgia, serif" font-size="94" fill="#171916">Make agents</text>
+  <text x="112" y="337" font-family="Georgia, serif" font-size="94" font-style="italic" fill="#f04b23">show their work.</text>
+  <text x="116" y="423" font-family="Georgia, serif" font-size="31" fill="#666a62">Traceable, inspectable AI agents and backend systems.</text>
+  <rect x="862" y="405" width="190" height="82" fill="#f04b23"/>
+  <text x="880" y="438" font-family="Georgia, serif" font-size="27" font-weight="bold" fill="#fffaf0">小木同学</text>
+  <text x="881" y="465" font-family="monospace" font-size="15" letter-spacing="4" fill="#fffaf0">BUILDS</text>
+</svg>

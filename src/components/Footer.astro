@@ -1,0 +1,24 @@
+---
+import { SITE } from '../consts';
+
+interface Props {
+  locale?: 'en' | 'zh';
+}
+
+const { locale = 'en' } = Astro.props;
+const copy = locale === 'zh'
+  ? { kicker: '让智能体展示它如何得出答案。', rss: '订阅', github: 'GitHub', top: '回到顶部' }
+  : { kicker: 'Make agents show their work.', rss: 'RSS', github: 'GitHub', top: 'Back to top' };
+---
+
+<footer class="site-footer">
+  <div>
+    <p class="footer-kicker">{copy.kicker}</p>
+    <p class="footer-meta">© {new Date().getFullYear()} {SITE.author} · 小木同学 Builds · Astro + Markdown</p>
+  </div>
+  <div class="footer-links">
+    <a href="/rss.xml">{copy.rss}</a>
+    <a href={SITE.github} rel="me noopener" target="_blank">{copy.github} ↗</a>
+    <a href="#top">{copy.top} ↑</a>
+  </div>
+</footer>

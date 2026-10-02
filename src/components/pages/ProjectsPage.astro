@@ -1,0 +1,45 @@
+---
+import type { Locale } from '../../consts';
+import { getSiteCopy } from '../../data/site';
+import ArchitecturePanel from '../ArchitecturePanel.astro';
+import ProjectGrid from '../ProjectGrid.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+interface Props { locale: Locale; }
+
+const { locale } = Astro.props;
+const copy = getSiteCopy(locale);
+const prefix = locale === 'zh' ? '/zh' : '';
+---
+
+<BaseLayout
+  locale={locale}
+  title={copy.meta.projectsTitle}
+  description={copy.projectsPage.intro}
+  alternatePath={locale === 'en' ? '/zh/projects/' : '/projects/'}
+>
+  <header class="editorial-header" id="top">
+    <p class="eyebrow">{copy.projectsPage.eyebrow}</p>
+    <h1>{copy.projectsPage.title}</h1>
+    <p>{copy.projectsPage.intro}</p>
+  </header>
+
+  <section class="projects-feature">
+    <div class="section-marker"><span>{copy.projectsPage.privateLabel}</span><i>CASE 001</i></div>
+    <div class="projects-feature-grid">
+      <div>
+        <p class="eyebrow">{copy.flagship.marker}</p>
+        <h2>{copy.flagship.title}</h2>
+        <p class="section-deck">{copy.flagship.subtitle}</p>
+        <p>{copy.flagship.description}</p>
+        <a class="button primary" href={`${prefix}/projects/reviewable-runtime/`}>{copy.flagship.cta} →</a>
+      </div>
+      <ArchitecturePanel locale={locale} compact />
+    </div>
+  </section>
+
+  <section class="projects-public">
+    <div class="section-marker"><span>{copy.projectsPage.publicLabel}</span><i>GITHUB / SOURCE</i></div>
+    <ProjectGrid locale={locale} />
+  </section>
+</BaseLayout>

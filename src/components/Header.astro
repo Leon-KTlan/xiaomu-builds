@@ -1,0 +1,53 @@
+---
+import type { Locale } from '../consts';
+
+interface Props {
+  locale?: Locale;
+  alternateHref?: string;
+}
+
+const { locale = 'en', alternateHref = locale === 'en' ? '/zh/' : '/' } = Astro.props;
+const currentPath = Astro.url.pathname;
+const copy = locale === 'zh'
+  ? { home: '首页', work: '项目', writing: '文章', profile: '履历', theme: '切换明暗主题', language: 'EN' }
+  : { home: 'Home', work: 'Work', writing: 'Writing', profile: 'Profile', theme: 'Toggle color theme', language: '中文' };
+const prefix = locale === 'zh' ? '/zh' : '';
+const nav = [
+  { href: `${prefix}/`, label: copy.home },
+  { href: `${prefix}/projects/`, label: copy.work },
+  { href: `${prefix}/writing/`, label: copy.writing },
+  { href: `${prefix}/#profile`, label: copy.profile },
+];
+---
+
+<header class="site-header">
+  <a class="wordmark" href={`${prefix}/`} aria-label="小木同学 Builds">
+    <span class="wordmark-hanzi">小木同学</span>
+    <span class="wordmark-builds">BUILDS</span>
+  </a>
+
+  <nav aria-label="主导航">
+    {nav.map((item) => (
+      <a href={item.href} aria-current={currentPath === item.href ? 'page' : undefined}>
+        {item.label}
+      </a>
+    ))}
+  </nav>
+
+  <div class="header-tools">
+    <a class="language-switch" href={alternateHref} hreflang={locale === 'en' ? 'zh-CN' : 'en'}>{copy.language}</a>
+    <button class="theme-toggle" type="button" aria-label={copy.theme} title={copy.theme}>
+      <span class="sun" aria-hidden="true">☀</span>
+      <span class="moon" aria-hidden="true">◐</span>
+    </button>
+  </div>
+</header>
+
+<script is:inline>
+  const button = document.querySelector('.theme-toggle');
+  button?.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('theme', next);
+  });
+</script>

@@ -1,0 +1,36 @@
+---
+import type { BlogPost } from '../utils/posts';
+import type { Locale } from '../consts';
+import { formatDate, readingTime } from '../utils/posts';
+
+interface Props {
+  post: BlogPost;
+  index?: number;
+  featured?: boolean;
+  locale?: Locale;
+}
+
+const { post, index = 0, featured = false, locale = 'en' } = Astro.props;
+const number = String(index + 1).padStart(2, '0');
+const href = `${locale === 'zh' ? '/zh' : ''}/writing/${post.data.path}/`;
+const copy = locale === 'zh'
+  ? { feature: '代表文章', read: '阅读全文', minutes: '分钟' }
+  : { feature: 'Featured essay', read: 'Read essay', minutes: 'min' };
+---
+
+<article class:list={['post-card', { featured }]}>
+  <a class="post-card-link" href={href} aria-label={`${copy.read}: ${post.data.title}`}>
+    <div class="post-card-topline">
+      <span class="post-number">{featured ? copy.feature : number}</span>
+      <span>{formatDate(post.data.publishedAt, locale)} · {readingTime(post.body)} {copy.minutes}</span>
+    </div>
+    <h3>{post.data.title}</h3>
+    <p>{post.data.description}</p>
+    <div class="post-card-footer">
+      <ul class="tag-list" aria-label="标签">
+        {post.data.tags.map((tag) => <li>{tag}</li>)}
+      </ul>
+      <span class="read-more" aria-hidden="true">{copy.read} <i>↗</i></span>
+    </div>
+  </a>
+</article>
