@@ -2,7 +2,7 @@
 
 Personal engineering site for Leon / [@Leon-KTlan](https://github.com/Leon-KTlan).
 
-> Make agents show their work.  
+> Make agents show their work.<br>
 > 让智能体展示它如何得出答案。
 
 The site presents selected AI Agent and backend work through architecture, engineering decisions, evaluation evidence, and explicit scope boundaries. It is built with Astro and Markdown and published as a static site.
