@@ -27,11 +27,7 @@ const writing = featured ? [featured, ...posts.filter((post) => post.id !== feat
   description={SITE.description[locale]}
   alternatePath={locale === 'en' ? '/zh/' : '/'}
 >
-  <section class="home-hero" id="top">
-    <div class="hero-rail" aria-hidden="true">
-      <span>{copy.hero.index}</span>
-      <span>ASTRO / MD</span>
-    </div>
+  <section class="home-hero">
     <div class="hero-main">
       <p class="eyebrow">{copy.hero.eyebrow}</p>
       <h1><span>{copy.hero.lineOne}</span><em>{copy.hero.lineTwo}</em></h1>
@@ -42,6 +38,57 @@ const writing = featured ? [featured, ...posts.filter((post) => post.id !== feat
       </div>
       <p class="availability"><i aria-hidden="true"></i>{copy.hero.status}</p>
     </div>
+    <div class="hero-portrait"><img src="/avatar-leon.png" width="185" height="185" alt={locale === 'zh' ? '小木同学的手绘头像' : 'Illustrated portrait of Leon'} /></div>
+    <a class="hero-case-note" href={`${prefix}/projects/reviewable-runtime/`}>
+      <span>{locale === 'zh' ? '正在构建' : 'Currently building'}</span>
+      <strong>{copy.flagship.title}</strong>
+      <p>{copy.flagship.subtitle}</p>
+      <small>{copy.flagship.cta} ↗</small>
+    </a>
+  </section>
+
+  <div class="signal-strip" aria-label={locale === 'zh' ? '技术方向' : 'Technical focus'}>
+    {copy.signals.map((signal, index) => <><span>{signal}</span>{index < copy.signals.length - 1 && <i>✳</i>}</>)}
+  </div>
+
+  <section class="writing-section" id="writing">
+    <div class="section-marker">
+      <span>{copy.sections.writing}</span>
+      <a href={`${prefix}/writing/`}>{copy.sections.allWriting} →</a>
+    </div>
+    <div class="section-intro compact">
+      <h2>{locale === 'zh' ? '最近文章' : 'Recent writing'}</h2>
+      <p>{copy.writingIntro}</p>
+    </div>
+    <div class="writing-showcase">
+      <div class="writing-list">
+        {writing.map((post, index) => <PostCard post={post} index={index} featured={index === 0} locale={locale} />)}
+      </div>
+      <aside class="writing-aside">
+        <a class="writing-case-card" href={`${prefix}/projects/reviewable-runtime/`}>
+          <span>{locale === 'zh' ? '代表案例' : 'Selected case'}</span>
+          <strong>{copy.flagship.title}</strong>
+          <p>{copy.flagship.subtitle}</p>
+          <small>{copy.flagship.cta} ↗</small>
+        </a>
+        <p class="writing-focus"><strong>{locale === 'zh' ? '关注方向' : 'What I focus on'}</strong>{copy.signals.slice(0, 4).join(' · ')}</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="flagship-section" id="flagship">
+    <div class="section-marker"><span>{copy.sections.flagship}</span><i>CASE 001</i></div>
+    <div class="flagship-intro">
+      <div>
+        <p class="eyebrow">{copy.flagship.marker}</p>
+        <h2>{copy.flagship.title}</h2>
+        <p class="section-deck">{copy.flagship.subtitle}</p>
+      </div>
+      <p>{copy.flagship.description}</p>
+    </div>
+
+    <ArchitecturePanel locale={locale} />
+
     <aside class="runtime-trace" aria-label={copy.trace.label}>
       <div class="trace-heading">
         <span>{copy.trace.label}</span>
@@ -56,24 +103,6 @@ const writing = featured ? [featured, ...posts.filter((post) => post.id !== feat
       </ol>
       <p class="trace-result"><span>✓</span>{copy.trace.result}</p>
     </aside>
-  </section>
-
-  <div class="signal-strip" aria-label={locale === 'zh' ? '技术方向' : 'Technical focus'}>
-    {copy.signals.map((signal, index) => <><span>{signal}</span>{index < copy.signals.length - 1 && <i>✳</i>}</>)}
-  </div>
-
-  <section class="flagship-section" id="flagship">
-    <div class="section-marker"><span>{copy.sections.flagship}</span><i>CASE 001</i></div>
-    <div class="flagship-intro">
-      <div>
-        <p class="eyebrow">{copy.flagship.marker}</p>
-        <h2>{copy.flagship.title}</h2>
-        <p class="section-deck">{copy.flagship.subtitle}</p>
-      </div>
-      <p>{copy.flagship.description}</p>
-    </div>
-
-    <ArchitecturePanel locale={locale} />
 
     <div class="responsibility-block">
       <span>{copy.flagship.roleLabel}</span>
@@ -114,20 +143,6 @@ const writing = featured ? [featured, ...posts.filter((post) => post.id !== feat
       <p>{copy.projectsIntro}</p>
     </div>
     <ProjectGrid locale={locale} />
-  </section>
-
-  <section class="writing-section" id="writing">
-    <div class="section-marker">
-      <span>{copy.sections.writing}</span>
-      <a href={`${prefix}/writing/`}>{copy.sections.allWriting} →</a>
-    </div>
-    <div class="section-intro compact">
-      <h2>{locale === 'zh' ? '把工程判断写出来。' : 'Write down the engineering judgment.'}</h2>
-      <p>{copy.writingIntro}</p>
-    </div>
-    <div class="writing-list">
-      {writing.map((post, index) => <PostCard post={post} index={index} featured={index === 0} locale={locale} />)}
-    </div>
   </section>
 
   <section class="profile-section" id="profile">

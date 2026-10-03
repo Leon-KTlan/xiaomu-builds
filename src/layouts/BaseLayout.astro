@@ -38,7 +38,7 @@ const alternateURL = new URL(alternatePath ?? fallbackAlternate, Astro.site);
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f1eee7" />
+    <meta name="theme-color" content="#f9faf9" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title={SITE.title} href={new URL('rss.xml', Astro.site)} />
     <link rel="canonical" href={canonicalURL} />
@@ -54,13 +54,16 @@ const alternateURL = new URL(alternatePath ?? fallbackAlternate, Astro.site);
     <script is:inline>
       const savedTheme = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.dataset.theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.dataset.theme = initialTheme;
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', initialTheme === 'dark' ? '#141c22' : '#f9faf9');
     </script>
   </head>
   <body>
-    <div class="page-shell">
+    <a class="skip-link" href="#main-content">{locale === 'zh' ? '跳转到正文' : 'Skip to content'}</a>
+    <div class="page-shell" id="top">
       <Header locale={locale} alternateHref={alternateURL.pathname} />
-      <main>
+      <main id="main-content">
         <slot />
       </main>
       <Footer locale={locale} />
