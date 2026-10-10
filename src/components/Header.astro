@@ -9,8 +9,8 @@ interface Props {
 const { locale = 'en', alternateHref = locale === 'en' ? '/zh/' : '/' } = Astro.props;
 const currentPath = Astro.url.pathname;
 const copy = locale === 'zh'
-  ? { home: '首页', work: '项目', writing: '文章', profile: '履历', theme: '切换明暗主题', language: 'EN' }
-  : { home: 'Home', work: 'Work', writing: 'Writing', profile: 'Profile', theme: 'Toggle color theme', language: '中文' };
+  ? { home: '首页', work: '项目', writing: '文章', profile: '履历', theme: '切换明暗主题', language: 'EN', menu: '菜单', navigation: '站点导航' }
+  : { home: 'Home', work: 'Work', writing: 'Writing', profile: 'Profile', theme: 'Toggle color theme', language: '中文', menu: 'Menu', navigation: 'Site navigation' };
 const prefix = locale === 'zh' ? '/zh' : '';
 const nav = [
   { href: `${prefix}/`, label: copy.home },
@@ -48,21 +48,17 @@ const isCurrent = (href: string) => currentPath === href
 </header>
 
 <div class="mobile-navigation">
-  <nav class="mobile-nav-panel" id="mobile-nav-panel" aria-label={locale === 'zh' ? '移动端导航' : 'Mobile navigation'} hidden>
+  <wa-button class="mobile-nav-trigger" appearance="filled-outlined" aria-controls="mobile-nav-drawer" aria-expanded="false">
+    <span>小木同学</span><span class="mobile-menu-label"><span aria-hidden="true">☰</span>{copy.menu}</span>
+  </wa-button>
+</div>
+<wa-drawer class="mobile-nav-drawer" id="mobile-nav-drawer" placement="bottom" label={copy.navigation} light-dismiss>
+  <nav class="mobile-drawer-links" aria-label={copy.navigation}>
     {nav.map((item) => (
       <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}<span aria-hidden="true">↗</span></a>
     ))}
   </nav>
-  <button
-    class="mobile-nav-trigger"
-    type="button"
-    aria-controls="mobile-nav-panel"
-    aria-expanded="false"
-    aria-label={locale === 'zh' ? '打开导航菜单' : 'Open navigation menu'}
-  >
-    <span>小木同学</span><span class="mobile-nav-icon" aria-hidden="true">☰</span>
-  </button>
-</div>
+</wa-drawer>
 
 <script is:inline>
   const button = document.querySelector('.theme-toggle');
@@ -70,39 +66,22 @@ const isCurrent = (href: string) => currentPath === href
   button?.addEventListener('click', () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
+    document.documentElement.classList.toggle('wa-dark', next === 'dark');
+    document.documentElement.classList.toggle('wa-light', next === 'light');
     button.setAttribute('aria-pressed', String(next === 'dark'));
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#141c22' : '#f9faf9');
     localStorage.setItem('theme', next);
   });
 
-  const menu = document.querySelector('.mobile-navigation');
-  const trigger = menu?.querySelector('.mobile-nav-trigger');
-  const panel = menu?.querySelector('.mobile-nav-panel');
-  const closeMenu = () => {
-    if (!trigger || !panel) return;
-    panel.hidden = true;
-    trigger.setAttribute('aria-expanded', 'false');
-    trigger.setAttribute('aria-label', trigger.dataset.openLabel);
-  };
-  if (trigger && panel) {
-    trigger.dataset.openLabel = trigger.getAttribute('aria-label');
-    trigger.addEventListener('click', () => {
-      const opening = panel.hidden;
-      panel.hidden = !opening;
-      trigger.setAttribute('aria-expanded', String(opening));
-      trigger.setAttribute('aria-label', opening
-        ? (document.documentElement.lang === 'zh-CN' ? '关闭导航菜单' : 'Close navigation menu')
-        : trigger.dataset.openLabel);
-      if (opening) panel.querySelector('a')?.focus();
+  const trigger = document.querySelector('.mobile-nav-trigger');
+  const drawer = document.querySelector('.mobile-nav-drawer');
+  if (trigger && drawer) {
+    trigger.addEventListener('click', async () => {
+      await customElements.whenDefined('wa-drawer');
+      drawer.open = true;
     });
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && !panel.hidden) {
-        closeMenu();
-        trigger.focus();
-      }
-    });
-    document.addEventListener('click', (event) => {
-      if (!panel.hidden && !menu.contains(event.target)) closeMenu();
-    });
+    drawer.addEventListener('wa-show', () => trigger.setAttribute('aria-expanded', 'true'));
+    drawer.addEventListener('wa-hide', () => trigger.setAttribute('aria-expanded', 'false'));
+    drawer.addEventListener('wa-after-hide', () => trigger.focus());
   }
 </script>

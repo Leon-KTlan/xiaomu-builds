@@ -32,7 +32,7 @@ const prefix = locale === 'zh' ? '/zh' : '';
         <h2>{copy.flagship.title}</h2>
         <p class="section-deck">{copy.flagship.subtitle}</p>
         <p>{copy.flagship.description}</p>
-        <a class="button primary" href={`${prefix}/projects/reviewable-runtime/`}>{copy.flagship.cta} →</a>
+        <wa-button class="primary-cta" variant="brand" appearance="accent" href={`${prefix}/projects/reviewable-runtime/`}>{copy.flagship.cta} →</wa-button>
       </div>
       <ArchitecturePanel locale={locale} compact />
     </div>

@@ -40,8 +40,8 @@ const copy = locale === 'zh'
     <div class="article-grid">
       <aside class="article-aside">
         <span class="aside-label">{copy.tags}</span>
-        <ul class="tag-list vertical">
-          {post.data.tags.map((tag) => <li>{tag}</li>)}
+        <ul class="tag-list article-tag-list vertical">
+          {post.data.tags.map((tag) => <li><wa-tag size="s" appearance="filled-outlined" variant="neutral">{tag}</wa-tag></li>)}
         </ul>
       </aside>
       <div class="prose">

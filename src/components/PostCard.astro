@@ -28,8 +28,8 @@ const copy = locale === 'zh'
       <h2>{post.data.title}</h2>
       <p>{post.data.description}</p>
       <div class="post-card-footer">
-        <ul class="tag-list" aria-label={locale === 'zh' ? '标签' : 'Tags'}>
-          {post.data.tags.map((tag) => <li>{tag}</li>)}
+        <ul class="tag-list article-tag-list" aria-label={locale === 'zh' ? '标签' : 'Tags'}>
+          {post.data.tags.map((tag) => <li><wa-tag size="s" appearance="filled-outlined" variant="neutral">{tag}</wa-tag></li>)}
         </ul>
         <span class="read-more" aria-hidden="true">{copy.read} <i>↗</i></span>
       </div>

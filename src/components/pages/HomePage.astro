@@ -33,7 +33,7 @@ const writing = featured ? [featured, ...posts.filter((post) => post.id !== feat
       <h1><span>{copy.hero.lineOne}</span><em>{copy.hero.lineTwo}</em></h1>
       <p class="hero-intro">{copy.hero.intro}</p>
       <div class="hero-actions">
-        <a class="button primary" href="#flagship">{copy.hero.primary} <span>↓</span></a>
+        <wa-button class="primary-cta" variant="brand" appearance="accent" href="#flagship">{copy.hero.primary} <span>↓</span></wa-button>
         <a class="button text" href={SITE.github} target="_blank" rel="me noopener">{copy.hero.secondary} ↗</a>
       </div>
       <p class="availability"><i aria-hidden="true"></i>{copy.hero.status}</p>
@@ -172,7 +172,7 @@ const writing = featured ? [featured, ...posts.filter((post) => post.id !== feat
         <p>{copy.contact.body}</p>
         <ol>{copy.contact.order.map((item) => <li>{item}</li>)}</ol>
         <div class="hero-actions">
-          <a class="button primary" href={SITE.profileRepository} target="_blank" rel="noopener">{copy.contact.primary} ↗</a>
+          <wa-button class="primary-cta" variant="brand" appearance="accent" href={SITE.profileRepository} target="_blank" rel="noopener">{copy.contact.primary} ↗</wa-button>
           <a class="button text" href={SITE.github} target="_blank" rel="noopener">{copy.contact.secondary} ↗</a>
         </div>
       </div>
