@@ -9,14 +9,13 @@ interface Props {
 const { locale = 'en', alternateHref = locale === 'en' ? '/zh/' : '/' } = Astro.props;
 const currentPath = Astro.url.pathname;
 const copy = locale === 'zh'
-  ? { home: '首页', work: '项目', writing: '文章', profile: '履历', theme: '切换明暗主题', language: 'EN', menu: '菜单', navigation: '站点导航' }
-  : { home: 'Home', work: 'Work', writing: 'Writing', profile: 'Profile', theme: 'Toggle color theme', language: '中文', menu: 'Menu', navigation: 'Site navigation' };
+  ? { home: '首页', work: '项目', writing: '文章', theme: '切换明暗主题', language: 'EN', menu: '菜单', navigation: '站点导航' }
+  : { home: 'Home', work: 'Work', writing: 'Writing', theme: 'Toggle color theme', language: '中文', menu: 'Menu', navigation: 'Site navigation' };
 const prefix = locale === 'zh' ? '/zh' : '';
 const nav = [
   { href: `${prefix}/`, label: copy.home },
   { href: `${prefix}/projects/`, label: copy.work },
   { href: `${prefix}/writing/`, label: copy.writing },
-  { href: `${prefix}/#profile`, label: copy.profile },
 ];
 const isCurrent = (href: string) => currentPath === href
   || (href.includes('/writing/') && currentPath.startsWith(href))

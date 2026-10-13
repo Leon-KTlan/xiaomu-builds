@@ -2,15 +2,22 @@
 import { getCollection } from 'astro:content';
 import type { Locale } from '../../consts';
 import { getSiteCopy } from '../../data/site';
-import { sortPosts } from '../../utils/posts';
+import { formatDate, readingTime, sortPosts } from '../../utils/posts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../PostCard.astro';
 
 interface Props { locale: Locale; }
 
 const { locale } = Astro.props;
 const copy = getSiteCopy(locale);
 const posts = sortPosts(await getCollection('blog'), locale);
+const categoryKeys = ['engineering', 'method', 'notes'] as const;
+const categories = categoryKeys
+  .map((key) => ({ key, label: copy.writingPage.categories[key], count: posts.filter((post) => post.data.category === key).length }))
+  .filter((category) => category.count > 0);
+const categoryOptions = [
+  { key: 'all', label: copy.writingPage.all, count: posts.length },
+  ...categories,
+];
 ---
 
 <BaseLayout
@@ -19,13 +26,117 @@ const posts = sortPosts(await getCollection('blog'), locale);
   description={copy.writingPage.intro}
   alternatePath={locale === 'en' ? '/zh/writing/' : '/writing/'}
 >
-  <header class="editorial-header" id="top">
-    <p class="eyebrow">{copy.writingPage.eyebrow}</p>
-    <h1>{copy.writingPage.title}</h1>
-    <p>{copy.writingPage.intro}</p>
-    <span class="content-count">{String(posts.length).padStart(2, '0')} {copy.writingPage.count}</span>
-  </header>
-  <section class="writing-archive" aria-label={copy.meta.writingTitle}>
-    {posts.map((post, index) => <PostCard post={post} index={index} featured={index === 0} locale={locale} />)}
-  </section>
+  <div class="writing-index" data-writing-index>
+    <aside class="writing-index-sidebar">
+      <div class="writing-index-sidebar-title">
+        <h2>{copy.writingPage.categoryTitle}</h2>
+        <span aria-hidden="true">INDEX</span>
+      </div>
+      <nav class="writing-index-categories" aria-label={copy.writingPage.categoryTitle}>
+        {categoryOptions.map((category) => (
+          <button type="button" data-category={category.key} aria-pressed={category.key === 'all'}>
+            <span>{category.label}</span><span>{String(category.count).padStart(2, '0')}</span>
+          </button>
+        ))}
+      </nav>
+    </aside>
+
+    <div class="writing-index-content">
+      <header class="writing-index-header">
+        <div>
+          <p class="eyebrow">{copy.writingPage.eyebrow}</p>
+          <h1>{copy.writingPage.title}</h1>
+          <p class="writing-index-intro">{copy.writingPage.intro}</p>
+        </div>
+        <div class="writing-index-search">
+          <label for="writing-search">{copy.writingPage.searchLabel}</label>
+          <span aria-hidden="true">⌕</span>
+          <input id="writing-search" type="search" placeholder={copy.writingPage.searchPlaceholder} autocomplete="off" />
+        </div>
+      </header>
+
+      <nav class="writing-index-categories writing-index-mobile-categories" aria-label={copy.writingPage.categoryTitle}>
+        {categoryOptions.map((category) => (
+          <button type="button" data-category={category.key} aria-pressed={category.key === 'all'}>
+            <span>{category.label}</span><span>{String(category.count).padStart(2, '0')}</span>
+          </button>
+        ))}
+      </nav>
+
+      <div class="writing-index-result-bar">
+        <span data-selected-category>{copy.writingPage.all}</span>
+        <span data-result-count data-count-unit={copy.writingPage.count} data-count-singular={copy.writingPage.countSingular} data-sort-label={copy.writingPage.sortLabel} aria-live="polite">
+          {posts.length} {copy.writingPage.count} · {copy.writingPage.sortLabel}
+        </span>
+      </div>
+
+      <section class="writing-index-list" aria-label={copy.meta.writingTitle}>
+        {posts.map((post, index) => (
+          <article
+            class="writing-index-row"
+            data-post-category={post.data.category}
+            data-search={[
+              post.data.title,
+              post.data.description,
+              copy.writingPage.categories[post.data.category],
+              ...post.data.tags,
+            ].join(' ').toLocaleLowerCase()}
+          >
+            <a href={`${locale === 'zh' ? '/zh' : ''}/writing/${post.data.path}/`} aria-label={`${copy.writingPage.read}: ${post.data.title}`}>
+              <span class="writing-index-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <div class="writing-index-row-body">
+                <div class="writing-index-row-meta">
+                  <span>{copy.writingPage.categories[post.data.category]}</span>
+                  <span>{formatDate(post.data.publishedAt, locale)} · {readingTime(post.body)} {copy.writingPage.minutes}</span>
+                </div>
+                <h2>{post.data.title}</h2>
+                <p>{post.data.description}</p>
+                <ul class="writing-index-tags" aria-label={copy.writingPage.tagsLabel}>
+                  {post.data.tags.map((tag) => <li>{tag}</li>)}
+                </ul>
+              </div>
+              <span class="writing-index-arrow" aria-hidden="true">↗</span>
+            </a>
+          </article>
+        ))}
+      </section>
+      <p class="writing-index-empty" data-empty-state hidden>{copy.writingPage.empty}</p>
+    </div>
+  </div>
 </BaseLayout>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-writing-index]');
+  if (root) {
+    const search = root.querySelector<HTMLInputElement>('#writing-search');
+    const buttons = root.querySelectorAll<HTMLButtonElement>('[data-category]');
+    const rows = root.querySelectorAll<HTMLElement>('[data-post-category]');
+    const selectedLabel = root.querySelector<HTMLElement>('[data-selected-category]');
+    const resultCount = root.querySelector<HTMLElement>('[data-result-count]');
+    const emptyState = root.querySelector<HTMLElement>('[data-empty-state]');
+    let selectedCategory = 'all';
+
+    const update = () => {
+      const query = search?.value.trim().toLocaleLowerCase() ?? '';
+      let visible = 0;
+      rows.forEach((row) => {
+        const matchesCategory = selectedCategory === 'all' || row.dataset.postCategory === selectedCategory;
+        const matchesSearch = !query || row.dataset.search?.includes(query);
+        row.hidden = !(matchesCategory && matchesSearch);
+        if (!row.hidden) visible += 1;
+      });
+      buttons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.category === selectedCategory)));
+      const activeButton = [...buttons].find((button) => button.dataset.category === selectedCategory);
+      const categoryName = activeButton?.querySelector('span')?.textContent ?? '';
+      if (selectedLabel) selectedLabel.textContent = categoryName;
+      if (resultCount) resultCount.textContent = `${visible} ${visible === 1 ? resultCount.dataset.countSingular : resultCount.dataset.countUnit} · ${resultCount.dataset.sortLabel}`;
+      if (emptyState) emptyState.hidden = visible > 0;
+    };
+
+    search?.addEventListener('input', update);
+    buttons.forEach((button) => button.addEventListener('click', () => {
+      selectedCategory = button.dataset.category ?? 'all';
+      update();
+    }));
+  }
+</script>

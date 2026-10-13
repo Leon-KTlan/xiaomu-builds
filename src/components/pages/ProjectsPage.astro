@@ -1,8 +1,6 @@
 ---
 import type { Locale } from '../../consts';
 import { getSiteCopy } from '../../data/site';
-import ArchitecturePanel from '../ArchitecturePanel.astro';
-import ProjectGrid from '../ProjectGrid.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 interface Props { locale: Locale; }
@@ -10,6 +8,8 @@ interface Props { locale: Locale; }
 const { locale } = Astro.props;
 const copy = getSiteCopy(locale);
 const prefix = locale === 'zh' ? '/zh' : '';
+const totalCount = String(copy.projects.length + 1).padStart(2, '0');
+const publicCount = String(copy.projects.length).padStart(2, '0');
 ---
 
 <BaseLayout
@@ -18,28 +18,81 @@ const prefix = locale === 'zh' ? '/zh' : '';
   description={copy.projectsPage.intro}
   alternatePath={locale === 'en' ? '/zh/projects/' : '/projects/'}
 >
-  <header class="editorial-header" id="top">
-    <p class="eyebrow">{copy.projectsPage.eyebrow}</p>
-    <h1>{copy.projectsPage.title}</h1>
-    <p>{copy.projectsPage.intro}</p>
-  </header>
+  <h1 class="projects-visually-hidden" id="top">{copy.projectsPage.title}</h1>
 
-  <section class="projects-feature">
-    <div class="section-marker"><span>{copy.projectsPage.privateLabel}</span><i>CASE 001</i></div>
-    <div class="projects-feature-grid">
-      <div>
-        <p class="eyebrow">{copy.flagship.marker}</p>
-        <h2>{copy.flagship.title}</h2>
-        <p class="section-deck">{copy.flagship.subtitle}</p>
-        <p>{copy.flagship.description}</p>
-        <wa-button class="primary-cta" variant="brand" appearance="accent" href={`${prefix}/projects/reviewable-runtime/`}>{copy.flagship.cta} →</wa-button>
-      </div>
-      <ArchitecturePanel locale={locale} compact />
+  <section class="projects-index-section" aria-labelledby="case-section-title">
+    <div class="projects-index-heading">
+      <h2 id="case-section-title">{copy.projectsPage.caseSection}</h2>
+      <span>01 / {totalCount}</span>
     </div>
+    <article class="projects-index-card projects-index-featured">
+      <div class="projects-index-card-top">
+        <span>{copy.projectsPage.privateLabel}</span>
+        <span>{copy.projectsPage.featuredLabel}</span>
+      </div>
+      <div class="projects-index-card-body">
+        <div class="projects-index-card-intro">
+          <h3>{copy.flagship.title}</h3>
+          <p>{copy.flagship.subtitle}</p>
+        </div>
+        <div class="projects-index-card-details">
+          <div>
+            <h4>{copy.projectsPage.highlightsLabel}</h4>
+            <ul class="projects-index-highlights">
+              {copy.projectsPage.caseHighlights.map((highlight) => <li>{highlight}</li>)}
+            </ul>
+          </div>
+          <div>
+            <h4>{copy.projectsPage.stackLabel}</h4>
+            <ul class="projects-index-tags">
+              {copy.projectsPage.caseStack.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="projects-index-card-bottom">
+        <a href={`${prefix}/projects/reviewable-runtime/`}>{copy.flagship.cta} <span aria-hidden="true">↗</span></a>
+      </div>
+    </article>
   </section>
 
-  <section class="projects-public">
-    <div class="section-marker"><span>{copy.projectsPage.publicLabel}</span><i>GITHUB / SOURCE</i></div>
-    <ProjectGrid locale={locale} />
+  <section class="projects-index-section projects-index-public" aria-labelledby="public-section-title">
+    <div class="projects-index-heading">
+      <h2 id="public-section-title">{copy.projectsPage.publicLabel}</h2>
+      <span>{publicCount} {copy.projectsPage.countLabel}</span>
+    </div>
+    {copy.projects.map((project) => (
+      <article class="projects-index-card">
+        <div class="projects-index-card-top">
+          <span>{project.number} / {project.type}</span>
+          <span>{copy.projectsPage.sourceLabel}</span>
+        </div>
+        <div class="projects-index-card-body">
+          <div class="projects-index-card-intro">
+            <h3>{project.title}</h3>
+            <p>{project.summary}</p>
+          </div>
+          <div class="projects-index-card-details">
+            <div>
+              <h4>{copy.projectsPage.highlightsLabel}</h4>
+              <ul class="projects-index-highlights">
+                {project.proof.slice(0, 2).map((highlight) => <li>{highlight}</li>)}
+              </ul>
+            </div>
+            <div>
+              <h4>{copy.projectsPage.stackLabel}</h4>
+              <ul class="projects-index-tags">
+                {project.stack.slice(0, 3).map((item) => <li>{item}</li>)}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="projects-index-card-bottom">
+          <a href={project.href} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} — ${copy.projectsPage.githubCta}`}>
+            {copy.projectsPage.githubCta} <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </article>
+    ))}
   </section>
 </BaseLayout>
