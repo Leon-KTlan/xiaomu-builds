@@ -3,6 +3,7 @@ import type { BlogPost } from '../utils/posts';
 import type { Locale } from '../consts';
 import { formatDate, readingTime } from '../utils/posts';
 import BaseLayout from './BaseLayout.astro';
+import PostComments from '../components/PostComments.astro';
 
 interface Props {
   post: BlogPost;
@@ -11,9 +12,10 @@ interface Props {
 
 const { post, locale } = Astro.props;
 const prefix = locale === 'zh' ? '/zh' : '';
+const commentsEnabled = Boolean(import.meta.env.PUBLIC_WALINE_SERVER_URL?.trim());
 const copy = locale === 'zh'
-  ? { back: '返回全部文章', published: '发布于', updated: '更新于', minutes: '分钟阅读', tags: '文章标签', end: '完', note: '如果它让你想到什么，欢迎从 GitHub 开始交流。', more: '继续阅读' }
-  : { back: 'Back to all writing', published: 'Published', updated: 'Updated', minutes: 'min read', tags: 'Filed under', end: 'END', note: 'If this sparked a thought, start a conversation on GitHub.', more: 'Keep reading' };
+  ? { back: '返回全部文章', published: '发布于', updated: '更新于', minutes: '分钟阅读', tags: '文章标签', end: '完', note: commentsEnabled ? '如果它让你想到什么，欢迎在下方留言。' : '如果它让你想到什么，欢迎从 GitHub 开始交流。', more: '继续阅读' }
+  : { back: 'Back to all writing', published: 'Published', updated: 'Updated', minutes: 'min read', tags: 'Filed under', end: 'END', note: commentsEnabled ? 'If this sparked a thought, share it in the comments below.' : 'If this sparked a thought, start a conversation on GitHub.', more: 'Keep reading' };
 ---
 
 <BaseLayout
@@ -55,4 +57,5 @@ const copy = locale === 'zh'
       <a href={`${prefix}/writing/`}>{copy.more} →</a>
     </footer>
   </article>
+  <PostComments locale={locale} articleKey={post.data.translationKey} />
 </BaseLayout>

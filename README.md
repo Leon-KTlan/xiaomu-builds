@@ -59,6 +59,19 @@ draft: false
 
 Chinese drafts may be published first. Add the reviewed English counterpart within seven days so the public site remains bilingual.
 
+## Article comments
+
+Article pages use Waline. Chinese and English versions share one discussion through their `translationKey`. Visitors can comment without an account, but must provide a display name and email. Comments require approval; email notifications are not configured.
+
+The Waline server is a separate Vercel project using [`waline-server/`](waline-server/) as its root directory. To enable comments:
+
+1. Deploy that directory to Vercel and attach a Neon Postgres database. Initialize its tables with the [Waline PostgreSQL schema](https://waline.js.org/en/guide/get-started/) before redeploying the server.
+2. Register the administrator at `<Waline server URL>/ui/register` **before** opening comments to visitors. The first registered account becomes the administrator.
+3. In the Waline project's environment settings, set `SECURE_DOMAINS` to the blog host and the Waline server host (comma-separated, without `https://`). The versioned server config enables `COMMENT_AUDIT=true`; the server hook also rejects missing names or invalid emails.
+4. Set `PUBLIC_WALINE_SERVER_URL` to the Waline server's HTTPS URL in the blog's Vercel project, then redeploy the blog. For local development, put the same value in an untracked `.env` file (see `.env.example`). Without this value, article pages display a closed-comments message.
+
+No SMTP variables are needed. Email addresses are not verified and no reply notifications are sent. Back up the Neon database before changing comment providers or the Waline schema. Keep database credentials only in the Waline server's environment settings, never in the blog's `PUBLIC_` variables.
+
 ## Evidence policy
 
 - Private work is anonymized and never links the source repository.
@@ -74,4 +87,4 @@ Chinese drafts may be published first. Add the reviewed English counterpart with
 - GitHub Actions build check
 - Vercel preview and production deployment
 
-No client framework, database, analytics, or external font request is required.
+The article comments add a browser-side Waline client and a separate Waline/Neon service. The main blog remains statically generated and does not use external fonts or analytics.

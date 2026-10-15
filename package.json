@@ -13,6 +13,7 @@
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@awesome.me/webawesome": "^3.14.0",
+    "@waline/client": "^3.16.1",
     "astro": "^7.3.5"
   },
   "devDependencies": {

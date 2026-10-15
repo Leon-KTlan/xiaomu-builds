@@ -1,0 +1,65 @@
+---
+import type { Locale } from '../consts';
+import '@waline/client/style';
+
+interface Props {
+  locale: Locale;
+  articleKey: string;
+}
+
+const { locale, articleKey } = Astro.props;
+const serverURL = import.meta.env.PUBLIC_WALINE_SERVER_URL?.trim();
+const copy = locale === 'zh'
+  ? {
+      label: '读者交流',
+      title: '参与讨论',
+      description: '无需登录。显示名称和邮箱必填，评论经审核后展示。邮箱不会显示在评论区；目前不发送邮件通知。',
+      unavailable: '评论区尚未开放。',
+    }
+  : {
+      label: 'Conversation',
+      title: 'Join the discussion',
+      description: 'No account needed. Name and email are required. Comments appear after review. Your email is not shown with your comment; email notifications are not enabled.',
+      unavailable: 'Comments are not open yet.',
+    };
+---
+
+<section class="post-comments" aria-labelledby="post-comments-title">
+  <div class="post-comments-heading">
+    <span class="eyebrow">{copy.label}</span>
+    <h2 id="post-comments-title">{copy.title}</h2>
+    {serverURL && <p>{copy.description}</p>}
+  </div>
+  {serverURL
+    ? <div
+        id="post-comments-widget"
+        data-server-url={serverURL}
+        data-article-path={`/writing/${articleKey}/`}
+        data-locale={locale}
+      />
+    : <p class="post-comments-unavailable">{copy.unavailable}</p>}
+</section>
+
+<script>
+  const widget = document.querySelector<HTMLElement>('#post-comments-widget');
+
+  if (widget) {
+    import('@waline/client').then(({ init }) => {
+      init({
+        el: widget,
+        serverURL: widget.dataset.serverUrl!,
+        path: widget.dataset.articlePath!,
+        lang: widget.dataset.locale === 'zh' ? 'zh-CN' : 'en',
+        dark: 'html[data-theme="dark"]',
+        meta: ['nick', 'mail'],
+        requiredMeta: ['nick', 'mail'],
+        login: 'disable',
+        imageUploader: false,
+        emoji: false,
+        search: false,
+        pageview: false,
+        noRss: true,
+      });
+    });
+  }
+</script>
