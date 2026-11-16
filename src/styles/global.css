@@ -673,6 +673,9 @@
     --waline-white: var(--accent-ink);
     font-family: var(--sans);
   }
+  [data-theme='dark'] #post-comments-widget { --waline-warning-color: #f5d49a; }
+  #post-comments-widget .wl-cards .wl-user { display: none; }
+  #post-comments-widget .wl-cards .wl-card { margin-inline-start: 0; }
   #post-comments-widget :is(button, input, textarea, a):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
   .site-footer { margin-top: 115px; padding: 32px 0 48px; border-color: var(--line); }

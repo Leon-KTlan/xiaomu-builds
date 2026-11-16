@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://xiaomu-builds.vercel.app',
+  site: 'https://xiaomust.cn',
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
