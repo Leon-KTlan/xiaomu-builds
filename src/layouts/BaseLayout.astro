@@ -58,7 +58,7 @@ const alternateURL = new URL(alternatePath ?? fallbackAlternate, Astro.site);
       const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
       document.documentElement.dataset.theme = initialTheme;
       document.documentElement.classList.add(initialTheme === 'dark' ? 'wa-dark' : 'wa-light');
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', initialTheme === 'dark' ? '#141c22' : '#f9faf9');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', initialTheme === 'dark' ? '#181918' : '#f9faf9');
     </script>
   </head>
   <body>

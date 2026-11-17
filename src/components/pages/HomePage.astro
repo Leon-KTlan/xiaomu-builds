@@ -4,7 +4,6 @@ import type { Locale } from '../../consts';
 import { SITE } from '../../consts';
 import { getSiteCopy } from '../../data/site';
 import { sortPosts } from '../../utils/posts';
-import ArchitecturePanel from '../ArchitecturePanel.astro';
 import PostCard from '../PostCard.astro';
 import ProjectGrid from '../ProjectGrid.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -33,23 +32,30 @@ const writing = featured ? [featured, ...posts.filter((post) => post.id !== feat
       <h1><span>{copy.hero.lineOne}</span><em>{copy.hero.lineTwo}</em></h1>
       <p class="hero-intro">{copy.hero.intro}</p>
       <div class="hero-actions">
-        <wa-button class="primary-cta" variant="brand" appearance="accent" href="#flagship">{copy.hero.primary} <span>↓</span></wa-button>
-        <a class="button text" href={SITE.github} target="_blank" rel="me noopener">{copy.hero.secondary} ↗</a>
+        <wa-button class="primary-cta" variant="brand" appearance="accent" href={`${prefix}/projects/`}>{copy.hero.primary} <span>→</span></wa-button>
+        <wa-button class="primary-cta" variant="brand" appearance="accent" href={`${prefix}/writing/`}>{copy.hero.writing} <span>→</span></wa-button>
+        <wa-button class="primary-cta" variant="brand" appearance="accent" href={SITE.github} target="_blank" rel="me noopener">{copy.hero.secondary} <span>↗</span></wa-button>
+        <a class="button text email-link" href={`mailto:${SITE.email}`}>{SITE.email}</a>
       </div>
       <p class="availability"><i aria-hidden="true"></i>{copy.hero.status}</p>
     </div>
     <div class="hero-portrait"><img src="/avatar-leon.png" width="185" height="185" alt={locale === 'zh' ? '小木同学的手绘头像' : 'Illustrated portrait of Leon'} /></div>
-    <a class="hero-case-note" href={`${prefix}/projects/reviewable-runtime/`}>
-      <span>{locale === 'zh' ? '正在构建' : 'Currently building'}</span>
-      <strong>{copy.flagship.title}</strong>
-      <p>{copy.flagship.subtitle}</p>
-      <small>{copy.flagship.cta} ↗</small>
-    </a>
+    <div class="signal-strip hero-stack" aria-label={locale === 'zh' ? '技术栈' : 'Tech stack'}>
+      {copy.signals.map((signal) => <span>{signal}</span>)}
+    </div>
   </section>
 
-  <div class="signal-strip" aria-label={locale === 'zh' ? '技术方向' : 'Technical focus'}>
-    {copy.signals.map((signal, index) => <><span>{signal}</span>{index < copy.signals.length - 1 && <i>✳</i>}</>)}
-  </div>
+  <section class="work-section" id="work">
+    <div class="section-marker">
+      <span>{copy.sections.projects}</span>
+      <a href={`${prefix}/projects/`}>{copy.sections.allProjects} →</a>
+    </div>
+    <div class="section-intro compact">
+      <h2>{locale === 'zh' ? '作品' : 'Work'}</h2>
+      <p>{copy.projectsIntro}</p>
+    </div>
+    <ProjectGrid locale={locale} />
+  </section>
 
   <section class="writing-section" id="writing">
     <div class="section-marker">
@@ -60,122 +66,9 @@ const writing = featured ? [featured, ...posts.filter((post) => post.id !== feat
       <h2>{locale === 'zh' ? '最近文章' : 'Recent writing'}</h2>
       <p>{copy.writingIntro}</p>
     </div>
-    <div class="writing-showcase">
-      <div class="writing-list">
-        {writing.map((post, index) => <PostCard post={post} index={index} featured={index === 0} locale={locale} />)}
-      </div>
-      <aside class="writing-aside">
-        <a class="writing-case-card" href={`${prefix}/projects/reviewable-runtime/`}>
-          <span>{locale === 'zh' ? '代表案例' : 'Selected case'}</span>
-          <strong>{copy.flagship.title}</strong>
-          <p>{copy.flagship.subtitle}</p>
-          <small>{copy.flagship.cta} ↗</small>
-        </a>
-        <p class="writing-focus"><strong>{locale === 'zh' ? '关注方向' : 'What I focus on'}</strong>{copy.signals.slice(0, 4).join(' · ')}</p>
-      </aside>
+    <div class="home-writing-list writing-list">
+      {writing.map((post, index) => <PostCard post={post} index={index} featured={index === 0} locale={locale} />)}
     </div>
   </section>
 
-  <section class="flagship-section" id="flagship">
-    <div class="section-marker"><span>{copy.sections.flagship}</span><i>CASE 001</i></div>
-    <div class="flagship-intro">
-      <div>
-        <p class="eyebrow">{copy.flagship.marker}</p>
-        <h2>{copy.flagship.title}</h2>
-        <p class="section-deck">{copy.flagship.subtitle}</p>
-      </div>
-      <p>{copy.flagship.description}</p>
-    </div>
-
-    <ArchitecturePanel locale={locale} />
-
-    <aside class="runtime-trace" aria-label={copy.trace.label}>
-      <div class="trace-heading">
-        <span>{copy.trace.label}</span>
-        <i aria-hidden="true"></i>
-      </div>
-      <ol>
-        <li style="--delay: 0ms"><span>00:01</span><b>CTX</b><p>{copy.trace.input}</p></li>
-        <li style="--delay: 500ms"><span>00:02</span><b>GATE</b><p>{copy.trace.gate}</p></li>
-        <li style="--delay: 1000ms"><span>00:03</span><b>EVD</b><p>{copy.trace.evidence}</p></li>
-        <li style="--delay: 1500ms"><span>00:04</span><b>CP</b><p>{copy.trace.checkpoint}</p></li>
-        <li style="--delay: 2000ms"><span>00:05</span><b>OUT</b><p>{copy.trace.output}</p></li>
-      </ol>
-      <p class="trace-result"><span>✓</span>{copy.trace.result}</p>
-    </aside>
-
-    <div class="responsibility-block">
-      <span>{copy.flagship.roleLabel}</span>
-      <div>
-        <p>{copy.flagship.role}</p>
-        <small>{copy.flagship.boundary}</small>
-      </div>
-    </div>
-
-    <div class="evaluation-block">
-      <div class="evaluation-heading">
-        <div>
-          <p class="eyebrow">{copy.flagship.evaluation}</p>
-          <p>{copy.flagship.evaluationNote}</p>
-        </div>
-        <a class="button text" href={`${prefix}/projects/reviewable-runtime/`}>{copy.flagship.cta} →</a>
-      </div>
-      <div class="metric-grid">
-        {copy.flagship.metrics.map((metric) => (
-          <div class="metric">
-            <strong>{metric.value}</strong>
-            <span>{metric.label}</span>
-            <small>{metric.detail}</small>
-          </div>
-        ))}
-      </div>
-      <p class="caveat"><span>!</span>{copy.flagship.caveat}</p>
-    </div>
-  </section>
-
-  <section class="work-section" id="work">
-    <div class="section-marker">
-      <span>{copy.sections.projects}</span>
-      <a href={`${prefix}/projects/`}>{copy.sections.allProjects} →</a>
-    </div>
-    <div class="section-intro">
-      <h2>{locale === 'zh' ? '公开项目，公开证据。' : 'Public work. Public proof.'}</h2>
-      <p>{copy.projectsIntro}</p>
-    </div>
-    <ProjectGrid locale={locale} />
-  </section>
-
-  <section class="profile-section" id="profile">
-    <div class="section-marker"><span>{copy.sections.profile}</span><i>LEON / @LEON-KTLAN</i></div>
-    <div class="profile-grid">
-      <div class="profile-statement">
-        <span class="profile-monogram" aria-hidden="true">木</span>
-        <h2>{copy.profile.title}</h2>
-        <p>{copy.profile.body}</p>
-      </div>
-      <ol class="timeline">
-        {copy.profile.timeline.map((item) => (
-          <li>
-            <time>{item.date}</time>
-            <div><h3>{item.title}</h3><p>{item.detail}</p></div>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  <section class="contact-section" id="contact">
-    <div class="section-marker"><span>{copy.sections.contact}</span><i>OPEN SOURCE FIRST</i></div>
-    <div class="contact-grid">
-      <h2>{copy.contact.title}</h2>
-      <div>
-        <p>{copy.contact.body}</p>
-        <ol>{copy.contact.order.map((item) => <li>{item}</li>)}</ol>
-        <div class="hero-actions">
-          <wa-button class="primary-cta" variant="brand" appearance="accent" href={SITE.profileRepository} target="_blank" rel="noopener">{copy.contact.primary} ↗</wa-button>
-          <a class="button text" href={SITE.github} target="_blank" rel="noopener">{copy.contact.secondary} ↗</a>
-        </div>
-      </div>
-    </div>
-  </section>
 </BaseLayout>

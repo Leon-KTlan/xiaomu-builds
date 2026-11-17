@@ -68,7 +68,7 @@ const isCurrent = (href: string) => currentPath === href
     document.documentElement.classList.toggle('wa-dark', next === 'dark');
     document.documentElement.classList.toggle('wa-light', next === 'light');
     button.setAttribute('aria-pressed', String(next === 'dark'));
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#141c22' : '#f9faf9');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#181918' : '#f9faf9');
     localStorage.setItem('theme', next);
   });
 
